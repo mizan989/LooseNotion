@@ -1,4 +1,4 @@
-# LooseNotion
+# LooseNotion ([loosenotion.vercel.app](https://loosenotion.vercel.app))
 
 > Not quite Notion. 😭
 
