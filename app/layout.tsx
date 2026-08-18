@@ -5,6 +5,9 @@ import { LenisProvider } from "@/components/providers/lenis-provider";
 export const metadata: Metadata = {
   title: "LooseNotion",
   description: "Your connected workspace for docs and databases.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

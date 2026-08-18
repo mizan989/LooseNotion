@@ -88,8 +88,8 @@ export default function SignupPage() {
 
         <div className="rounded-2xl border border-white/10 bg-[#161619]/90 p-7 shadow-2xl backdrop-blur-xl">
           <div className="flex items-center gap-2.5 mb-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md border border-white/15 bg-white/5 font-mono text-xs font-bold text-white shadow-sm">
-              L
+            <div className="flex h-7 w-7 items-center justify-center rounded-md border border-white/15 bg-white/5 font-mono text-xs font-bold text-white shadow-sm tracking-tight">
+              LN
             </div>
             <h1 className="text-xl font-bold tracking-tight text-white">Create workspace</h1>
           </div>
