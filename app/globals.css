@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,
+  .dark {
+    --background: 240 10% 8%;
+    --foreground: 0 0% 95%;
+    --card: 240 8% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 8% 10%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 0% 95%;
+    --primary-foreground: 240 6% 10%;
+    --secondary: 240 6% 16%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 240 6% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 6% 18%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 63% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 6% 20%;
+    --input: 240 6% 20%;
+    --ring: 240 5% 80%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Lenis Smooth Scrolling */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Watermelon Motion & Glow Utilities */
+.watermelon-glow {
+  box-shadow: 0 0 50px -10px rgba(255, 255, 255, 0.07);
+}
+
+.watermelon-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.watermelon-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Tiptap editor styling */
+.ln-editor .ProseMirror {
+  outline: none;
+  min-height: 60vh;
+}
+.ln-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  @apply text-muted-foreground;
+}
+.ln-editor h1 { @apply text-3xl font-bold mt-6 mb-2; }
+.ln-editor h2 { @apply text-2xl font-bold mt-5 mb-2; }
+.ln-editor h3 { @apply text-xl font-bold mt-4 mb-2; }
+.ln-editor p { @apply my-1 leading-7; }
+.ln-editor ul { @apply list-disc pl-6 my-1; }
+.ln-editor ol { @apply list-decimal pl-6 my-1; }
+.ln-editor blockquote { @apply border-l-2 border-border pl-4 italic text-muted-foreground; }
+.ln-editor pre { @apply bg-muted rounded-md p-3 font-mono text-sm overflow-x-auto; }
+.ln-editor code { @apply font-mono text-sm bg-muted rounded px-1; }
+.ln-editor hr { @apply border-border my-4; }
+.ln-editor ul[data-type="taskList"] { @apply list-none pl-0; }
+.ln-editor ul[data-type="taskList"] li { @apply flex items-start gap-2; }
+.ln-editor ul[data-type="taskList"] li > label { @apply mt-1; }
+.ln-editor img { @apply rounded-md max-w-full my-2; }
+
+.ln-editor {
+  position: relative;
+  padding-left: 1.5rem;
+}
+.ln-drag-handle {
+  position: absolute;
+  left: 0;
+  margin-top: 0.35rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  opacity: 0;
+  cursor: grab;
+  @apply text-muted-foreground hover:bg-accent;
+  transition: opacity 0.1s ease;
+}
+.ln-editor:hover .ln-drag-handle {
+  opacity: 0.6;
+}
+.ln-drag-handle:hover {
+  opacity: 1 !important;
+}
