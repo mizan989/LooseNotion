@@ -108,11 +108,36 @@ export async function movePage(pageId: string, parentId: string | null, position
 
 export async function deletePage(pageId: string) {
   const supabase = createClient();
+
+  // Find all descendant pages recursively to delete them together
+  const { data: allPages } = await supabase
+    .from("pages")
+    .select("id, parent_id")
+    .eq("is_deleted", false);
+
+  const pageIdsToDelete = new Set<string>([pageId]);
+  let added = true;
+  while (added) {
+    added = false;
+    (allPages ?? []).forEach((p) => {
+      if (p.parent_id && pageIdsToDelete.has(p.parent_id) && !pageIdsToDelete.has(p.id)) {
+        pageIdsToDelete.add(p.id);
+        added = true;
+      }
+    });
+  }
+
+  const idsArray = Array.from(pageIdsToDelete);
+
   const { error } = await supabase
     .from("pages")
     .update({ is_deleted: true })
-    .eq("id", pageId);
+    .in("id", idsArray);
   if (error) throw error;
+
+  // Clean up favorites
+  await supabase.from("favorites").delete().in("page_id", idsArray);
+
   revalidatePath("/workspace");
 }
 

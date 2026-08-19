@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -44,6 +44,8 @@ function SortableRow({
   const router = useRouter();
   const expanded = useSidebarStore((s) => s.expandedIds.has(node.id));
   const toggleExpanded = useSidebarStore((s) => s.toggleExpanded);
+  const markPageDeleted = useSidebarStore((s) => s.markPageDeleted);
+  const unmarkPageDeleted = useSidebarStore((s) => s.unmarkPageDeleted);
   const [renaming, setRenaming] = useState(false);
   const [title, setTitle] = useState(node.title);
 
@@ -60,6 +62,27 @@ function SortableRow({
   async function commitRename() {
     setRenaming(false);
     if (title.trim() && title !== node.title) await renamePage(node.id, title.trim());
+  }
+
+  async function handleDelete(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 1. Optimistic removal (0ms perceived latency)
+    markPageDeleted(node.id);
+
+    // 2. If the user is currently on this page, redirect immediately
+    if (activePageId === node.id) {
+      router.push("/workspace");
+    }
+
+    // 3. Perform server deletion in background
+    try {
+      await deletePage(node.id);
+    } catch (err) {
+      console.error("Failed to delete page:", err);
+      unmarkPageDeleted(node.id);
+    }
   }
 
   return (
@@ -124,7 +147,7 @@ function SortableRow({
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setRenaming(true)}>Rename</DropdownMenuItem>
               <DropdownMenuItem onClick={() => duplicatePage(node.id)}>Duplicate</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => deletePage(node.id)} className="text-destructive">
+              <DropdownMenuItem onClick={handleDelete} className="text-destructive">
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -158,8 +181,14 @@ export function PageTree({
   workspaceId: string;
   parentId?: string | null;
 }) {
-  const [items, setItems] = useState(nodes);
+  const deletedPageIds = useSidebarStore((s) => s.deletedPageIds);
+  const visibleNodes = nodes.filter((n) => !deletedPageIds.has(n.id));
+  const [items, setItems] = useState(visibleNodes);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+
+  useEffect(() => {
+    setItems(nodes.filter((n) => !deletedPageIds.has(n.id)));
+  }, [nodes, deletedPageIds]);
 
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;

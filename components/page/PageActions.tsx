@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { MoreHorizontal, Star, Copy, Trash2, Download } from "lucide-react";
+import { MoreHorizontal, Star, Copy, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -10,10 +10,13 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { deletePage, duplicatePage, toggleFavorite } from "@/actions/pages";
+import { useSidebarStore } from "@/stores/sidebar-store";
 import type { Page } from "@/types/page";
 
 export function PageActions({ page }: { page: Page }) {
   const router = useRouter();
+  const markPageDeleted = useSidebarStore((s) => s.markPageDeleted);
+  const unmarkPageDeleted = useSidebarStore((s) => s.unmarkPageDeleted);
 
   async function handleDuplicate() {
     const copy = await duplicatePage(page.id);
@@ -21,8 +24,16 @@ export function PageActions({ page }: { page: Page }) {
   }
 
   async function handleDelete() {
-    await deletePage(page.id);
+    // 0ms instant optimistic UI response
+    markPageDeleted(page.id);
     router.push("/workspace");
+
+    try {
+      await deletePage(page.id);
+    } catch (err) {
+      console.error("Failed to delete page:", err);
+      unmarkPageDeleted(page.id);
+    }
   }
 
   return (

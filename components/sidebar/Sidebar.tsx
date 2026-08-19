@@ -14,6 +14,15 @@ import { ExportMenu } from "@/components/sidebar/ExportMenu";
 import { createPage } from "@/actions/pages";
 import type { Page, PageTreeNode } from "@/types/page";
 
+function filterTree(nodes: PageTreeNode[], deletedIds: Set<string>): PageTreeNode[] {
+  return nodes
+    .filter((n) => !deletedIds.has(n.id))
+    .map((n) => ({
+      ...n,
+      children: filterTree(n.children, deletedIds),
+    }));
+}
+
 export function Sidebar({
   workspaceId,
   workspaceName,
@@ -32,9 +41,13 @@ export function Sidebar({
   const activePageId = pathname?.split("/workspace/")[1];
   const isOpen = useSidebarStore((s) => s.isOpen);
   const toggle = useSidebarStore((s) => s.toggle);
+  const deletedPageIds = useSidebarStore((s) => s.deletedPageIds);
   const [searchOpen, setSearchOpen] = useState(false);
   const [creatingPage, setCreatingPage] = useState(false);
   const [creatingDb, setCreatingDb] = useState(false);
+
+  const visibleFavorites = favorites.filter((p) => !deletedPageIds.has(p.id));
+  const visibleTree = filterTree(tree, deletedPageIds);
 
   async function handleNewPage() {
     try {
@@ -107,13 +120,13 @@ export function Sidebar({
         <ExportMenu workspaceId={workspaceId} />
       </div>
 
-      {favorites.length > 0 && (
+      {visibleFavorites.length > 0 && (
         <div className="mt-3 px-2">
           <div className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
             <Star className="h-3 w-3" /> Favorites
           </div>
           <div className="space-y-0.5 mt-0.5">
-            {favorites.map((page) => (
+            {visibleFavorites.map((page) => (
               <motion.div key={page.id} whileHover={{ x: 2 }} whileTap={{ scale: 0.99 }}>
                 <Link
                   href={`/workspace/${page.id}`}
@@ -156,10 +169,10 @@ export function Sidebar({
             </motion.button>
           </div>
         </div>
-        <PageTree nodes={tree} activePageId={activePageId} workspaceId={workspaceId} />
+        <PageTree nodes={visibleTree} activePageId={activePageId} workspaceId={workspaceId} />
       </div>
 
-      <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} pages={flattenTree(tree)} />
+      <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} pages={flattenTree(visibleTree)} />
     </motion.aside>
   );
 }
