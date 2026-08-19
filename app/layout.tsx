@@ -6,7 +6,9 @@ export const metadata: Metadata = {
   title: "LooseNotion",
   description: "Your connected workspace for docs and databases.",
   icons: {
-    icon: "/favicon.svg",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
 
