@@ -2,72 +2,53 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2, MailCheck } from "lucide-react";
+import { ArrowLeft, Loader2, AlertCircle, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/client/supabase";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
+function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" {...props}>
+      <path
+        fill="#4285F4"
+        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+      />
+    </svg>
+  );
+}
 
 export default function SignupPage() {
-  const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [confirmationSent, setConfirmationSent] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
+  async function handleGoogleSignUp() {
+    setGoogleLoading(true);
     setError(null);
-
     const supabase = createClient();
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { name } },
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
 
-    setLoading(false);
     if (error) {
       setError(error.message);
-      return;
+      setGoogleLoading(false);
     }
-
-    if (!data.session) {
-      setConfirmationSent(true);
-      return;
-    }
-    router.push("/workspace");
-    router.refresh();
-  }
-
-  if (confirmationSent) {
-    return (
-      <main className="flex min-h-screen items-center justify-center px-4 bg-[#0e0e11] text-zinc-100">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ type: "spring", stiffness: 350, damping: 25 }}
-          className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#161619]/90 p-8 text-center shadow-2xl backdrop-blur-xl"
-        >
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <MailCheck className="h-6 w-6" />
-          </div>
-          <h1 className="mb-2 text-xl font-bold tracking-tight text-white">Check your inbox</h1>
-          <p className="text-xs text-zinc-400 leading-relaxed">
-            We sent a confirmation link to <span className="font-semibold text-zinc-200">{email}</span>. Click it, then sign in.
-          </p>
-          <Link href="/login" className="mt-6 inline-block">
-            <Button size="sm" className="bg-white text-black hover:bg-zinc-200 text-xs font-medium px-4">
-              Back to sign in
-            </Button>
-          </Link>
-        </motion.div>
-      </main>
-    );
   }
 
   return (
@@ -93,71 +74,60 @@ export default function SignupPage() {
             </div>
             <h1 className="text-xl font-bold tracking-tight text-white">Create workspace</h1>
           </div>
-          <p className="mb-6 text-xs text-zinc-400">Get started with your free LooseNotion workspace.</p>
+          <p className="mb-5 text-xs text-zinc-400">Get started with your free LooseNotion workspace.</p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-            <motion.div whileFocus={{ scale: 1.01 }}>
-              <Input
-                placeholder="Your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-black/30 border-white/10 text-xs h-10 focus-visible:ring-1 focus-visible:ring-white/30"
-                required
-              />
-            </motion.div>
+          {/* Maintenance Notice Banner */}
+          <div className="mb-5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-left">
+            <div className="flex items-start gap-2.5">
+              <AlertCircle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <h2 className="text-xs font-semibold text-amber-300 tracking-tight">
+                  Email Sign-Up Temporarily Paused
+                </h2>
+                <p className="text-[11px] text-amber-200/80 mt-1 leading-relaxed">
+                  Email OTP verification is offline for maintenance. Please use Google / Gmail below to sign up and access your vault instantly.
+                </p>
+              </div>
+            </div>
+          </div>
 
-            <motion.div whileFocus={{ scale: 1.01 }}>
-              <Input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-black/30 border-white/10 text-xs h-10 focus-visible:ring-1 focus-visible:ring-white/30"
-                required
-              />
-            </motion.div>
+          {/* Google Sign Up Primary Action */}
+          <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              type="button"
+              onClick={handleGoogleSignUp}
+              disabled={googleLoading}
+              className="w-full h-11 bg-white text-black hover:bg-zinc-200 font-medium text-xs shadow-lg flex items-center justify-center gap-2.5 transition-all"
+            >
+              {googleLoading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-black" /> Connecting to Google...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2 font-semibold">
+                  <GoogleIcon className="h-4 w-4" /> Sign up with Google
+                </span>
+              )}
+            </Button>
+          </motion.div>
 
-            <motion.div whileFocus={{ scale: 1.01 }}>
-              <Input
-                type="password"
-                placeholder="Password (min 6 chars)"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-black/30 border-white/10 text-xs h-10 focus-visible:ring-1 focus-visible:ring-white/30"
-                minLength={6}
-                required
-              />
-            </motion.div>
+          <div className="flex items-center justify-center gap-1.5 mt-3 text-[11px] text-zinc-500">
+            <Sparkles className="h-3 w-3 text-zinc-400" />
+            <span>Instant setup • No password needed</span>
+          </div>
 
-            {error && (
-              <motion.p
-                initial={{ opacity: 0, x: -6 }}
-                animate={{ opacity: 1, x: [0, -4, 4, -4, 0] }}
-                transition={{ duration: 0.3 }}
-                className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-md p-2"
-              >
-                {error}
-              </motion.p>
-            )}
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: [0, -4, 4, -4, 0] }}
+              transition={{ duration: 0.3 }}
+              className="mt-4 text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-md p-2"
+            >
+              {error}
+            </motion.p>
+          )}
 
-            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-10 bg-white text-black hover:bg-zinc-200 font-medium text-xs shadow-md mt-1"
-              >
-                {loading ? (
-                  <span className="flex items-center gap-1.5">
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Creating account...
-                  </span>
-                ) : (
-                  "Create free workspace"
-                )}
-              </Button>
-            </motion.div>
-          </form>
-
-          <p className="mt-5 text-center text-xs text-zinc-500">
+          <p className="mt-6 text-center text-xs text-zinc-500 border-t border-white/5 pt-5">
             Already have an account?{" "}
             <Link href="/login" className="text-zinc-300 hover:text-white underline underline-offset-4 font-medium transition-colors">
               Sign in
