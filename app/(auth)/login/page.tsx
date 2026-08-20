@@ -199,6 +199,16 @@ export default function LoginPage() {
         <Suspense fallback={<div className="h-64 rounded-2xl border border-white/10 bg-[#161619]/90 p-7" />}>
           <LoginForm />
         </Suspense>
+
+        <div className="mt-6 flex items-center justify-center gap-4 text-[11px] text-zinc-500">
+          <Link href="/privacy" className="hover:text-zinc-400 transition-colors">
+            Privacy Policy
+          </Link>
+          <span>•</span>
+          <Link href="/terms" className="hover:text-zinc-400 transition-colors">
+            Terms of Service
+          </Link>
+        </div>
       </motion.div>
     </main>
   );

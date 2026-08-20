@@ -116,6 +116,18 @@ export default function SignupPage() {
             <span>Instant setup • No password needed</span>
           </div>
 
+          <p className="mt-4 text-center text-[11px] text-zinc-500 leading-relaxed px-2">
+            By signing up, you agree to LooseNotion&apos;s{" "}
+            <Link href="/terms" className="text-zinc-400 hover:text-white underline underline-offset-2 transition-colors">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="text-zinc-400 hover:text-white underline underline-offset-2 transition-colors">
+              Privacy Policy
+            </Link>
+            .
+          </p>
+
           {error && (
             <motion.p
               initial={{ opacity: 0, x: -6 }}

@@ -487,40 +487,56 @@ export function LandingView({ user }: { user: User | null }) {
       </section>
 
       {/* ── Footer ──────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/10 bg-[#0d0d0f] py-6 mt-auto">
-        <div className="container mx-auto max-w-5xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <div className="flex items-center gap-2">
-            <div className="flex h-5 w-5 items-center justify-center rounded border border-white/15 bg-white/5 font-mono text-[9px] font-bold text-white tracking-tight">
-              LN
+      <footer className="border-t border-white/10 bg-[#0d0d0f] py-8 mt-auto">
+        <div className="container mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-white/5 text-xs text-zinc-500">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-5 w-5 items-center justify-center rounded border border-white/15 bg-white/5 font-mono text-[9px] font-bold text-white tracking-tight">
+                LN
+              </div>
+              <span className="font-semibold text-zinc-300">LooseNotion</span>
+              <span className="text-zinc-700 hidden sm:inline">•</span>
+              <span className="text-zinc-500 hidden sm:inline">Connected workspace for docs & databases</span>
             </div>
-            <span>LooseNotion</span>
+
+            <div className="flex items-center gap-4">
+              {SOCIAL_LINKS.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.name}
+                  className="text-zinc-400 hover:text-white transition-colors p-1 -m-1 rounded hover:bg-white/5"
+                >
+                  {social.icon}
+                </a>
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {SOCIAL_LINKS.map((social) => (
-              <a
-                key={social.name}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={social.name}
-                className="text-zinc-400 hover:text-white transition-colors p-1 -m-1 rounded hover:bg-white/5"
-              >
-                {social.icon}
-              </a>
-            ))}
-          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 text-xs text-zinc-500">
+            <div>
+              © 2026 LooseNotion. All rights reserved.
+            </div>
 
-          <div className="flex items-center gap-5">
-            <Link href="/login" className="hover:text-zinc-300 transition-colors">
-              Sign in
-            </Link>
-            <Link href="/signup" className="hover:text-zinc-300 transition-colors">
-              Sign up
-            </Link>
-            <Link href="/workspace" className="hover:text-zinc-300 transition-colors">
-              Workspace
-            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+              <Link href="/privacy" className="hover:text-zinc-300 transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="hover:text-zinc-300 transition-colors">
+                Terms of Service
+              </Link>
+              <Link href="/login" className="hover:text-zinc-300 transition-colors">
+                Sign in
+              </Link>
+              <Link href="/signup" className="hover:text-zinc-300 transition-colors">
+                Sign up
+              </Link>
+              <Link href="/workspace" className="hover:text-zinc-300 transition-colors">
+                Workspace
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
