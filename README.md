@@ -9,18 +9,6 @@ built on Next.js + Supabase, per the agreed blueprint.
 
 ---
 
-## ⚠️ Before you run this
-
-This project was generated as source code in an offline sandbox with no network
-access, so **none of it has been `npm install`'d, compiled, or run against a real
-database.** Treat it as a complete, carefully-written scaffold that follows the
-blueprint's folder structure and feature list — not a tested, guaranteed-working
-build. Budget time to install dependencies, wire up your own Supabase project, and
-fix whatever TypeScript/build errors turn up (dependency versions drift, and I
-wasn't able to verify exact compatibility between package versions).
-
----
-
 ## 1. Install dependencies
 
 ```bash
